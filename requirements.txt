@@ -1,4 +1,4 @@
-python==3.8.13
+# python==3.8.13
 numpy==1.22.3
 scipy==1.10.1
 pydub==0.25.1

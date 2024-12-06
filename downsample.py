@@ -34,10 +34,11 @@ def downsample_wav(input_wav: str, output_wav: str, target_rate: int) -> None:
     num_samples = int(len(data) * target_rate / sample_rate)
 
     # Resample the audio wav_data
-    downsample_data = resample(data, num_samples)
+    downsampled_data = resample(data, num_samples)
+    downsampled_data = np.int16(data / np.max(np.abs(downsampled_data)) * 32767)
 
     # Write the downsampled wav_data to the new .wav file
-    wav.write(output_wav, target_rate, downsample_data.astype(np.int16))
+    wav.write(output_wav, target_rate, downsampled_data.astype(np.int16))
 
     print(f"The downsampled file has been saved as {output_wav}")
 
