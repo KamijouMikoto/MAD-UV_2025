@@ -16,9 +16,9 @@ import torch.optim as optim
 from model import CNNClassifier
 from hyperparameter import hparam
 from collections import defaultdict
-from sklearn.metrics import f1_score
 from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader
+from sklearn.metrics import recall_score
 from data_pipeline import AudioFeatureDataset
 
 
@@ -115,14 +115,14 @@ if __name__ == '__main__':
     # Set the model
     model = CNNClassifier(channels=hparam['model']['channels'],
                           kernel_sizes=hparam['model']['kernel_sizes'],
-                          strides=hparam['model']['strides'],
+                          paddings=hparam['model']['paddings'],
                           dropout=hparam['model']['dropout']).to(device)
 
     # Set the loss function and optimiser
     criterion = nn.BCEWithLogitsLoss()
-    optimiser = optim.AdamW(model.parameters(), 
-                            lr=hparam['training']['learning_rate'], 
-                            weight_decay=hparam['training']['weight_decay'])
+    optimiser = optim.Adam(model.parameters(),
+                           lr=hparam['training']['learning_rate'],
+                           weight_decay=hparam['training']['weight_decay'])
 
     # Set the training hyperparameters
     batch_size = hparam['training']['batch_size']
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
 
     # Training phase
-    best_seg_f1 = 0
+    best_seg_uar = 0
     for epoch in range(training_epoch):
         # Get the training loss
         train_loss = train(net=model, data_loader=train_loader)
@@ -158,31 +158,31 @@ if __name__ == '__main__':
             # Get the validation loss, predicted probabilities, true labels, and filenames
             valid_loss, probabilities, labels, filenames = validate(net=model, data_loader=valid_loader)
 
-            # Calculate the segment-level F1-score by grid search the threshold
-            max_f1 = 0
+            # Calculate the segment-level UAR by grid search the threshold
+            max_uar = 0
             best_threshold = 0
             threshold = 0.1
             while threshold <= 0.9:
                 predictions = (probabilities >= threshold).float()
-                f1 = f1_score(labels.detach().cpu(), predictions.detach().cpu())
-                if f1 >= max_f1:
-                    max_f1 = f1
+                uar = recall_score(labels.detach().cpu(), predictions.detach().cpu(), average='macro')
+                if uar >= max_uar:
+                    max_uar = uar
                     best_threshold = threshold
                 threshold += 0.05
 
             # Print loss and segment-level metric, and write the log
             print(f"-->\tEpoch {epoch+1:04}:\tValidation Loss: {valid_loss:.3f}")
-            print(f"-->\tEpoch {epoch+1:04}:\tSegment F1-Score: {max_f1:.3f} at Threshold {best_threshold:.3f}")
+            print(f"-->\tEpoch {epoch+1:04}:\tSegment UAR: {max_uar:.3f} at Threshold {best_threshold:.3f}")
             writer.add_scalar('loss/validation', valid_loss, epoch+1)
-            writer.add_scalar('seg_metric/f1-score', max_f1, epoch+1)
+            writer.add_scalar('seg_metric/uar', max_uar, epoch+1)
             with open(log_path, 'a') as lf:
                 lf.write(f"-->\tEpoch {epoch+1:04}:\tValidation Loss: {valid_loss:.3f}\n")
-                lf.write(f"-->\tEpoch {epoch+1:04}:\tSegment F1-Score: {max_f1:.3f} "
+                lf.write(f"-->\tEpoch {epoch+1:04}:\tSegment UAR: {max_uar:.3f} "
                          f"at Threshold {best_threshold:.3f}\n")
 
-            # Save the model if the segment-level F1-score is improved
-            if max_f1 > best_seg_f1:
-                best_seg_f1 = max_f1
+            # Save the model if the segment-level UAR is improved
+            if max_uar > best_seg_uar:
+                best_seg_uar = max_uar
                 model_path = os.path.join(hparam['path']['model_path'], f"best_segment_{best_threshold:.3f}.pth")
                 
                 if not os.path.exists(hparam['path']['model_path']):
@@ -197,7 +197,7 @@ if __name__ == '__main__':
                 with open(log_path, 'a') as lf:
                     lf.write(f"Model saved at {model_path}\n")
 
-            # Calculate the sample-level F1-score with majority vote
+            # Calculate the subject-level UAR with majority vote
             predictions = (probabilities >= best_threshold).float()
 
             grouped_predictions = defaultdict(list)
@@ -217,10 +217,10 @@ if __name__ == '__main__':
                 final_predictions.append(majority_pred.detach().cpu())
                 final_labels.append(majority_label.detach().cpu())
 
-            f1 = f1_score(final_labels, final_predictions)
+            uar = recall_score(final_labels, final_predictions, average='macro')
 
-            # Print the sample-level metric and write the log
-            print(f"-->\tEpoch {epoch+1:04}:\tSample F1-Score: {f1:.3f} at Threshold {best_threshold:.3f}")
-            writer.add_scalar('sam_metric/f1-score', f1, epoch+1)
+            # Print the subject-level metric and write the log
+            print(f"-->\tEpoch {epoch+1:04}:\tSubject UAR: {uar:.3f} at Threshold {best_threshold:.3f}")
+            writer.add_scalar('sam_metric/uar', uar, epoch+1)
             with open(log_path, 'a') as lf:
-                lf.write(f"-->\tEpoch {epoch+1:04}:\tSample F1-Score: {f1:.3f} at Threshold {best_threshold:.3f}\n")
+                lf.write(f"-->\tEpoch {epoch+1:04}:\tSubject UAR: {uar:.3f} at Threshold {best_threshold:.3f}\n")

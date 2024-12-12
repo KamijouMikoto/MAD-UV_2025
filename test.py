@@ -57,7 +57,7 @@ if __name__ == '__main__':
     # Load the model
     model = CNNClassifier(channels=hparam['model']['channels'],
                           kernel_sizes=hparam['model']['kernel_sizes'],
-                          strides=hparam['model']['strides'],
+                          paddings=hparam['model']['paddings'],
                           dropout=hparam['model']['dropout']).to(device)
     segment_model = glob.glob(os.path.join(hparam['path']['model_path'], "best_segment_*.pth"))
     model.load_state_dict(torch.load(segment_model[0]))
