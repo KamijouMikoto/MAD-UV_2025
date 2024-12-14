@@ -10,16 +10,13 @@ feature = 'full'
 
 feature_list = {
     'full': {
-        'feature_length': 59,
-        'input_dim': 300
+        'feature_length': 59
     },
     'ultra': {
-        'feature_length': 59,
-        'input_dim': 300
+        'feature_length': 59
     },
     'audi': {
-        'feature_length': 59,
-        'input_dim': 300
+        'feature_length': 59
     }
 }
 
@@ -35,7 +32,6 @@ hparam = {
     },
     'model': {
         'feature_length': feature_list[feature]['feature_length'],
-        'input_dim': feature_list[feature]['input_dim'],
         'channels': [32, 64],
         'kernel_sizes': [(5, 5), (3, 3)],
         'paddings': [(2, 2), (1, 1)],
