@@ -77,8 +77,13 @@ python test.py
 
 If you use this baseline in your research, please cite:
 
-```
-[The MAD-UV Challenge Baseline Paper in INTERSPEECH 2025]
+```bibtex
+@Article{zYang25-MAD,
+  author =  "Z. Yang and M. Song and X. Jing and H. Zhang and K. Qian and B. Hu and K. Tamada and T. Takumi and B. W. Schuller and Y. Yamamoto",
+  title =   "{MAD-UV}: The 1st {INTERSPEECH} Mice Autism Detection via Ultrasound Vocalization Challenge",
+  journal = "arXiv preprint arXiv:2501.04252",
+  year =    "2025"
+}
 ```
 
 ## Contact
