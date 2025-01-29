@@ -1,11 +1,11 @@
-# MAD-UV Challenge 2025 Baseline Code
+# MADUV Challenge 2025 Baseline Code
 
 This repository provides the baseline code for **The 1st INTERSPEECH Mice Autism Detection via Ultrasound Vocalisation 
-(MAD-UV) Challenge**, focusing on the classification of ultrasonic vocalisations (USVs) from mice.
+(MADUV) Challenge**, focusing on the classification of ultrasonic vocalisations (USVs) from mice.
 
 The baseline code demonstrates signal preprocessing, feature extraction, model training, validation, and prediction.
 
-More information about the challenge via https://www.mad-uv.org/.
+More information about the challenge via https://www.maduv.org/.
 
 ---
 
@@ -22,7 +22,7 @@ spectrogram).
 
 ## File Structure
 ```
-/MAD-UV_2025/
+/MADUV_2025/
 │
 ├── trim.py                     # Script for trimming audio files
 ├── feature_extractor.py        # Script for extracting features
@@ -80,13 +80,13 @@ If you use this baseline in your research, please cite:
 ```bibtex
 @Article{zYang25-MAD,
   author =  "Z. Yang and M. Song and X. Jing and H. Zhang and K. Qian and B. Hu and K. Tamada and T. Takumi and B. W. Schuller and Y. Yamamoto",
-  title =   "{MAD-UV}: The 1st {INTERSPEECH} Mice Autism Detection via Ultrasound Vocalization Challenge",
-  journal = "arXiv preprint arXiv:2501.04252",
+  title =   "{MADUV}: The 1st {INTERSPEECH} Mice Autism Detection via Ultrasound Vocalization Challenge",
+  journal = "arXiv preprint arXiv:2501.04292",
   year =    "2025"
 }
 ```
 
 ## Contact
-For any questions or issues, please contact the organising team of MAD-UV Challenge:
+For any questions or issues, please contact the organising team of MADUV Challenge:
 
-Email: info@mad-uv.org or zijiang.yang@ieee.org
+Email: info@maduv.org or zijiang.yang@ieee.org

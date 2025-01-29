@@ -1,6 +1,6 @@
 """
-MAD-UV Challenge 2025 Baseline Code
-Website: https://www.mad-uv.org/
+MADUV Challenge 2025 Baseline Code
+Website: https://www.maduv.org/
 Author: Zijiang YANG (The University of Tokyo), et al.
 Date: November 2024
 """
